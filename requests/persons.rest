@@ -3,13 +3,21 @@ GET http://localhost:3001/api/persons/
 ###
 GET http://localhost:3001/info
 
+
+###
+GET http://localhost:3001/unknown
+
 ###
 GET http://localhost:3001/api/persons/2
 
 
 ###
-GET http://localhost:3001/api/persons/1
+GET http://localhost:3001/api/persons/5c41c90e84d891c15dfa3431
 
+
+
+###
+GET http://localhost:3001/api/persons/piipaa
 
 ###
 POST http://localhost:3001/api/persons/ HTTP/1.1
@@ -25,7 +33,7 @@ POST http://localhost:3001/api/persons/ HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Arto Hellas",
+    "name": "Arto Zellas",
     "number": "123-1231233"
 }
 
@@ -35,7 +43,17 @@ content-type: application/json
 
 {
     "name": "Arto Hellas",
-    "number": "123-1231299"
+    "number": "123-12312999"
+}
+
+
+###
+PUT http://localhost:3001/api/persons/piipaapoo HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Arto Hellas",
+    "number": "123-12312999"
 }
 
 ###
