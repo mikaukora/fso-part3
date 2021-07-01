@@ -26,7 +26,16 @@ content-type: application/json
 
 {
     "name": "Arto Hellas",
-    "number": "123-123123"
+    "number": "123-1231233"
+}
+
+###
+PUT http://localhost:3001/api/persons/60dd50c21c268923b5ce1a04 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Arto Hellas",
+    "number": "123-1231299"
 }
 
 ###
@@ -46,8 +55,8 @@ content-type: application/json
 }
 
 ###
-GET http://localhost:3001/api/persons/328261130
+GET http://localhost:3001/api/persons/60dd51620f76f0240c7670f5
 
 
 ###
-DELETE http://localhost:3001/api/persons/328261130
+DELETE http://localhost:3001/api/persons/60dd525105c6d22459eec29e

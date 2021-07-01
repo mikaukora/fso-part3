@@ -19,29 +19,6 @@ app.use(
   )
 );
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get("/", (request, response) => {
   response.send(
     '<h1>Hello World!</h1>Check <a href="/api/persons">persons</a>'
@@ -56,10 +33,13 @@ app.get("/api/persons", (request, response) => {
 
 app.get("/info", (request, response) => {
   const timeStamp = Date();
-  const personCount = persons.length;
-  response.send(
-    `<p>Phonebook has info for ${personCount} people</p><p>${timeStamp}</p>`
-  );
+
+  Person.find({}).then((persons) => {
+    const personCount = persons.length;
+    response.send(
+      `<p>Phonebook has info for ${personCount} people</p><p>${timeStamp}</p>`
+    );
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -74,15 +54,14 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-  console.log(persons);
-  response.status(204).end();
+  Person.deleteMany({ _id: request.params.id })
+    .then(() => {
+      response.status(204).end();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
-
-const generateId = () => {
-  return Math.floor(Math.random() * 999000000);
-};
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -99,21 +78,39 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  if (persons.find((e) => e.name === body.name)) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
+  Person.find({ name: body.name })
+    .then((res) => {
+      if (res.length) {
+        return response.status(400).json({
+          error: "name must be unique",
+          data: res,
+        });
+      }
 
-  const person = {
-    name: body.name,
-    number: body.number,
-    id: generateId(),
-  };
+      const person = new Person({
+        name: body.name,
+        number: body.number,
+      });
 
-  persons = persons.concat(person);
+      person.save().then((result) => {
+        console.log(`added ${person}`);
+        response.json(person);
+      });
+    })
+    .catch((err) => console.log(err));
+});
 
-  response.json(person);
+app.put("/api/persons/:id", (request, response) => {
+  const body = request.body;
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { number: body.number },
+    { new: true }
+  )
+    .then((res) => {
+      response.json(res);
+    })
+    .catch((err) => response.status(400).json(err));
 });
 
 const PORT = process.env.PORT || 3001;
