@@ -88,7 +88,7 @@ app.put("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndUpdate(
     request.params.id,
     { number: body.number },
-    { new: true }
+    { new: true, runValidators: true }
   )
     .then((res) => {
       response.json(res);
@@ -109,7 +109,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
-    return response.status(400).send({ error: "name is not unique" });
+    return response.status(400).send({ error: error.message });
   }
 
   next(error);

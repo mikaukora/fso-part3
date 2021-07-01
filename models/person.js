@@ -20,8 +20,17 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  number: { type: String, required: true },
+  name: { type: String, required: true, minLength: 3, unique: true },
+  number: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function (v) {
+        return /\d{8}/.test(v);
+      },
+      message: (props) => `${props.value} does not have at least 8 digits!`,
+    },
+  },
 });
 
 personSchema.plugin(uniqueValidator);
